@@ -139,7 +139,7 @@ Aplikasi ini menggunakan Clean Architecture dengan MVVM Pattern:
 
 ## 📋 Prerequisites
 
-- **Android Studio** Meerkat  | 2024.3.2 
+- **Android Studio** Meerkat  | 2024.3.2
 - **Gradle** 8.14.1
 - **Android SDK** API level 24 (minimum) - 35 (target)
 - **JDK** 17 atau lebih baru
@@ -169,16 +169,17 @@ Konfigurasi Base URL ada di file `app/src/main/java/com/virtualsblog/project/uti
 
 ```kotlin
 object Constants {
-    const val BASE_URL = "https://be-prakmob.kodingin.id/api/v1/"
-    // API_KEY akan diambil dari local.properties
-    // ... other constants
+  val BASE_URL: String = BuildConfig.BASE_URL
+  val API_KEY: String = BuildConfig.API_KEY
+  // ... other constants
 }
 ```
 
-Untuk API Key, tambahkan ke file `local.properties` di root proyek Anda (buat jika belum ada):
+Untuk Base_Url dan API Key, tambahkan ke file `local.properties` di root proyek Anda (buat jika belum ada):
 
 ```properties
-API_KEY="YOUR_API_KEY_HERE"
+BASE_URL=Url_Backend_Api
+API_KEY=API_Key_Anda
 ```
 
 > **⚠️ Penting:** Pastikan `local.properties` ada di `.gitignore` Anda agar tidak ter-commit ke repository.
@@ -226,8 +227,8 @@ POST /posts/{id}/likes
 Untuk keamanan, simpan konfigurasi sensitif seperti `API_KEY` dan `BASE_URL` di `local.properties`:
 
 ```properties
-API_KEY="YOUR_API_KEY_HERE"
-BASE_URL="YOUR_BACKEND_API_URL"
+API_KEY=Url_Backend_Api
+BASE_URL=API_Key_Anda
 ```
 
 Akses nilai-nilai ini dalam file `build.gradle.kts` (app) dan teruskan sebagai BuildConfig fields atau string resources. Di `Constants.kt`, Anda kemudian akan mereferensikan `BuildConfig.API_KEY` dan `BuildConfig.BASE_URL`.
@@ -246,6 +247,7 @@ Akses nilai-nilai ini dalam file `build.gradle.kts` (app) dan teruskan sebagai B
 ### Main Application Flow
 - **HomeScreen** - Dashboard dengan recent posts dan statistik
 - **ProfileScreen** - User profile management dan logout
+- **EditProfileScreen** - Mengedit data profil pengguna (nama lengkap, username dan juga email)
 - **ChangePasswordScreen** - Mengubah password pengguna saat login
 - **CreatePostScreen** - Form untuk membuat post baru
 - **PostListScreen** - Menampilkan semua postingan
@@ -262,9 +264,9 @@ Navigasi diatur dalam `BlogNavGraph.kt` menggunakan `NavHostController`. Destina
 ```kotlin
 // Contoh NavHost dari BlogNavGraph.kt
 NavHost(navController = navController, startDestination = BlogDestinations.SPLASH_ROUTE) {
-    composable(BlogDestinations.SPLASH_ROUTE) { SplashScreen(...) }
-    composable(BlogDestinations.LOGIN_ROUTE) { LoginScreen(...) }
-    // ...composable lainnya untuk register, home, post detail, profile, dll.
+  composable(BlogDestinations.SPLASH_ROUTE) { SplashScreen(...) }
+  composable(BlogDestinations.LOGIN_ROUTE) { LoginScreen(...) }
+  // ...composable lainnya untuk register, home, post detail, profile, dll.
 }
 ```
 
@@ -353,13 +355,13 @@ Struktur file proyek mengikuti panduan Clean Architecture dengan pemisahan yang 
 - `app/build.gradle.kts`: Konfigurasi build untuk modul aplikasi.
 - `app/src/main/AndroidManifest.xml`: Manifest aplikasi.
 - `app/src/main/java/com/virtualsblog/project/`:
-    - `BlogApplication.kt`: Kelas Application utama dengan anotasi Hilt.
-    - `data/`: Layer data (local, remote, mappers, repositories).
-    - `domain/`: Layer domain (models, repository interfaces, use cases).
-    - `presentation/`: Layer presentasi (UI, ViewModels, navigation).
-    - `di/`: Modul Dependency Injection Hilt.
-    - `util/`: Kelas utilitas.
-    - `preferences/`: Pengelolaan DataStore Preferences.
+  - `BlogApplication.kt`: Kelas Application utama dengan anotasi Hilt.
+  - `data/`: Layer data (local, remote, mappers, repositories).
+  - `domain/`: Layer domain (models, repository interfaces, use cases).
+  - `presentation/`: Layer presentasi (UI, ViewModels, navigation).
+  - `di/`: Modul Dependency Injection Hilt.
+  - `util/`: Kelas utilitas.
+  - `preferences/`: Pengelolaan DataStore Preferences.
 - `app/src/androidTest/`: Tes instrumentasi.
 - `app/src/test/`: Tes unit lokal.
 - `build.gradle.kts` (root): Konfigurasi build level proyek.
@@ -372,33 +374,33 @@ Struktur file proyek mengikuti panduan Clean Architecture dengan pemisahan yang 
 #### build.gradle.kts (Project-level)
 ```kotlin
 plugins {
-    alias(libs.plugins.android.application) apply false
-    alias(libs.plugins.kotlin.android) apply false
-    alias(libs.plugins.kotlin.compose) apply false
-    alias(libs.plugins.hilt.android) apply false
-    alias(libs.plugins.ksp) apply false
-    alias(libs.plugins.kotlin.serialization) apply false
+  alias(libs.plugins.android.application) apply false
+  alias(libs.plugins.kotlin.android) apply false
+  alias(libs.plugins.kotlin.compose) apply false
+  alias(libs.plugins.hilt.android) apply false
+  alias(libs.plugins.ksp) apply false
+  alias(libs.plugins.kotlin.serialization) apply false
 }
 ```
 
 #### build.gradle.kts (App-level)
 ```kotlin
 android {
-    namespace = "com.virtualsblog.project"
-    compileSdk = 35
+  namespace = "com.virtualsblog.project"
+  compileSdk = 35
 
-    defaultConfig {
-        applicationId = "com.virtualsblog.project"
-        minSdk = 24
-        targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
-        testInstrumentationRunner = "com.virtualsblog.project.CustomTestRunner"
-        // Untuk mengambil API_KEY dari local.properties:
-        // buildConfigField("String", "API_KEY", "\"${System.getenv("API_KEY") ?: project.findProperty("API_KEY") ?: "YOUR_DEFAULT_API_KEY_IF_NOT_FOUND"}\"")
-    }
-    // ... buildFeatures { compose = true }
-    // ... buildTypes { release { isMinifyEnabled = false ... } }
+  defaultConfig {
+    applicationId = "com.virtualsblog.project"
+    minSdk = 24
+    targetSdk = 35
+    versionCode = 1
+    versionName = "1.0"
+    testInstrumentationRunner = "com.virtualsblog.project.CustomTestRunner"
+    // Untuk mengambil API_KEY dari local.properties:
+    // buildConfigField("String", "API_KEY", "\"${System.getenv("API_KEY") ?: project.findProperty("API_KEY") ?: "YOUR_DEFAULT_API_KEY_IF_NOT_FOUND"}\"")
+  }
+  // ... buildFeatures { compose = true }
+  // ... buildTypes { release { isMinifyEnabled = false ... } }
 }
 ```
 
@@ -494,7 +496,7 @@ X-API-KEY: {YOUR_API_KEY_FROM_CONFIG}
   "success": true,
   "message": "Success message",
   "data": {
-     // Data spesifik endpoint
+    // Data spesifik endpoint
   }
 }
 ```
