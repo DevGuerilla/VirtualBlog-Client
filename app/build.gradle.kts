@@ -35,8 +35,9 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "1.0.0"
-
         testInstrumentationRunner = "com.virtualsblog.project.CustomTestRunner"
+
+
 
         // API Key configuration
         val localProperties = Properties()
@@ -238,4 +239,5 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     debugImplementation(libs.chucker)
+    implementation(kotlin("test"))
 }
