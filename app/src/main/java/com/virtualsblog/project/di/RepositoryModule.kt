@@ -29,6 +29,7 @@ abstract class RepositoryModule {
     ): UserRepository
 
     @Binds
+    @Singleton
     abstract fun bindBlogRepository(
         blogRepositoryImpl: BlogRepositoryImpl
     ): BlogRepository
